@@ -1,0 +1,190 @@
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+class Student
+{
+public:
+    char name[50];
+    int rollno;
+    int age;
+
+    void addStudent()
+    {
+        cin.ignore();
+
+        cout << "\nEnter student name:";
+        cin.getline(name, 50);
+
+        cout << "Enter student Roll Number:";
+        cin >> rollno;
+
+        cout << "Enter student age:";
+        cin >> age;
+    }
+
+    void displayStudent()
+    {
+        cout << "\n==============================";
+        cout << "\nStudent Name:" << name;
+        cout << "\nStudent Roll Number:" << rollno;
+        cout << "\nStudent Age:" << age;
+        cout << "\n==============================\n";
+    }
+};
+
+int main()
+{
+    Student s;
+    int choice;
+
+    fstream file;
+
+    do
+    {
+        cout << "\n======STUDENT MANAGEMENT SYSTEM======";
+        cout << "\n1.Add student details";
+        cout << "\n2.Display student details";
+        cout << "\n3.Search student details";
+        cout << "\n4.Delete student details";
+        cout << "\n5.Exit";
+
+        cout << "\nEnter choice:";
+        cin >> choice;
+
+        switch(choice)
+        {
+
+        case 1:
+
+            file.open("student.txt", ios::app);
+
+            s.addStudent();
+
+            file << s.name << endl;
+            file << s.rollno << endl;
+            file << s.age << endl;
+
+            file.close();
+
+            cout << "\nStudent details added successfully.\n";
+
+            break;
+
+        case 2:
+
+            file.open("student.txt", ios::in);
+
+            while(file.getline(s.name, 50))
+            {
+                file >> s.rollno;
+                file >> s.age;
+
+                file.ignore();
+
+                s.displayStudent();
+            }
+
+            file.close();
+
+            break;
+
+        case 3:
+        {
+            int r;
+            int found = 0;
+
+            cout << "\nEnter Roll Number to Search:";
+            cin >> r;
+
+            file.open("student.txt", ios::in);
+
+            while(file.getline(s.name, 50))
+            {
+                file >> s.rollno;
+                file >> s.age;
+
+                file.ignore();
+
+                if(s.rollno == r)
+                {
+                    s.displayStudent();
+                    found = 1;
+                }
+            }
+
+            file.close();
+
+            if(found == 0)
+            {
+                cout << "\nStudent Not Found!\n";
+            }
+
+            break;
+        }
+
+        case 4:
+        {
+            int r;
+            int found = 0;
+
+            cout << "\nEnter Roll Number to Delete:";
+            cin >> r;
+
+            fstream temp;
+
+            file.open("student.txt", ios::in);
+            temp.open("temp.txt", ios::out);
+
+            while(file.getline(s.name, 50))
+            {
+                file >> s.rollno;
+                file >> s.age;
+
+                file.ignore();
+
+                if(s.rollno != r)
+                {
+                    temp << s.name << endl;
+                    temp << s.rollno << endl;
+                    temp << s.age << endl;
+                }
+                else
+                {
+                    found = 1;
+                }
+            }
+
+            file.close();
+            temp.close();
+
+            remove("student.txt");
+            rename("temp.txt", "student.txt");
+
+            if(found == 1)
+            {
+                cout << "\nStudent Deleted Successfully!\n";
+            }
+            else
+            {
+                cout << "\nStudent Not Found!\n";
+            }
+
+            break;
+        }
+
+        case 5:
+
+            cout << "\nProgram Ended!\n";
+            break;
+
+        default:
+
+            cout << "\nInvalid Choice!\n";
+        }
+
+    } while(choice != 5);
+
+    return 0;
+}
